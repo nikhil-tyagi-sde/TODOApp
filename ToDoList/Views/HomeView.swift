@@ -21,17 +21,18 @@ struct HomeView: View {
             ZStack {
                 VStack(alignment: .leading) {
                     List {
-                        ForEach(tasks, id: \.id) { task in
+                        ForEach($tasks) { $task in//Here we are binding the task element to an array.
                             Button(action: {
-                                if let indexOfTask = tasks.firstIndex(where: {$0.id == task.id}) {
-                                    tasks[indexOfTask] = TaskModel(name: task.name, priority: task.priority, isCompleted: !task.isCompleted)
-                                } else {
-                                    alertTitle = "Something went wrong"
-                                    alertMessage = "Cannot complete the task right now."
-                                    return
-                                }
+                                task.isCompleted.toggle()
+//                                if let indexOfTask = tasks.firstIndex(where: {$0.id == task.id}) {
+//                                    tasks[indexOfTask] = TaskModel(name: task.name, priority: task.priority, isCompleted: !task.isCompleted)
+//                                } else {
+//                                    alertTitle = "Something went wrong"
+//                                    alertMessage = "Cannot complete the task right now."
+//                                    return
+//                                }
                             }, label: {
-                                TaskView(task: TaskModel(name: task.name, priority: task.priority), priorityBar: task.priority, taskCompleted: task.isCompleted)
+                                TaskView(task: $task)
                             })
                         }.onDelete(perform: delete)
                     }

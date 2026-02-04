@@ -8,20 +8,27 @@
 import SwiftUI
 
 struct TaskView: View {
-    let task: TaskModel
-    @State var priorityBar: TaskPriorityType
-    @State var taskCompleted: Bool
+    @Binding var task: TaskModel
     
     var colorBand: Color {
-        switch priorityBar.priority {
-        case "Low":
+        switch task.priority {
+        case .low:
             return Color.blue
-        case "Medium":
+        case .medium:
             return Color.green
-        case "High":
+        case .high:
             return Color.red
-        default:
-            return Color.gray
+        }
+    }
+    
+    var printPriority: String {
+        switch task.priority {
+        case .low:
+            return "Low"
+        case .medium:
+            return "Medium"
+        case .high:
+            return "High"
         }
     }
     
@@ -30,7 +37,7 @@ struct TaskView: View {
             HStack {
                 VStack {
                     HStack {
-                        if !taskCompleted{
+                        if !task.isCompleted{
                             Image(systemName: "circle")
                         } else {
                             ZStack {
@@ -51,7 +58,7 @@ struct TaskView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(colorBand)
-                        Text(priorityBar.priority)
+                        Text(printPriority)
                     }.frame(width: 100, height: 30)
                         .padding(.horizontal)
                 }
@@ -62,5 +69,5 @@ struct TaskView: View {
 }
 
 #Preview {
-    TaskView(task: TaskModel(name: "Dog Walk", priority: .high), priorityBar: .high, taskCompleted: false)
+    TaskView(task: .constant(TaskModel(name: "", priority: .high)))
 }
