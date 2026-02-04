@@ -23,20 +23,13 @@ struct HomeView: View {
                     List {
                         ForEach(tasks, id: \.id) { task in
                             Button(action: {
-                                
-                                let toggleComplete: Bool = !task.isCompleted
-                                
-                                let taskToggleCompleteInstance = TaskModel(name: task.name, priority: task.priority, isCompleted: toggleComplete)
-                                
-                                if let taskToComplete = taskToComplete {
-                                    guard let indexOfTask = tasks.firstIndex(of: taskToComplete) else {
-                                        alertTitle = "Something went wrong"
-                                        alertMessage = "Cannot complete the task right now."
-                                        return
-                                    }
-                                    tasks[indexOfTask] = taskToggleCompleteInstance
+                                if let indexOfTask = tasks.firstIndex(where: {$0.id == task.id}) {
+                                    tasks[indexOfTask] = TaskModel(name: task.name, priority: task.priority, isCompleted: !task.isCompleted)
+                                } else {
+                                    alertTitle = "Something went wrong"
+                                    alertMessage = "Cannot complete the task right now."
+                                    return
                                 }
-  
                             }, label: {
                                 TaskView(task: TaskModel(name: task.name, priority: task.priority), priorityBar: task.priority, taskCompleted: task.isCompleted)
                             })
