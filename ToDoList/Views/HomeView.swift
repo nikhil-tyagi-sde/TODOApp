@@ -1,0 +1,68 @@
+//
+//  ContentView.swift
+//  ToDoList
+//
+//  Created by Nikhil Tyagi on 03/02/26.
+//
+
+import SwiftUI
+
+struct HomeView: View {
+    @State private var tasks: [TaskModel] = []
+    @State private var showSheet = false
+    @State private var taskCompleted: Bool = false
+    @State private var taskToComplete: TaskModel?
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var showAlert: Bool = false
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                VStack(alignment: .leading) {
+                    List {
+                        ForEach(tasks, id: \.id) { task in
+                            Button(action: {
+                                
+                                let toggleComplete: Bool = !task.isCompleted
+                                
+                                let taskToggleCompleteInstance = TaskModel(name: task.name, priority: task.priority, isCompleted: toggleComplete)
+                                
+                                if let taskToComplete = taskToComplete {
+                                    guard let indexOfTask = tasks.firstIndex(of: taskToComplete) else {
+                                        alertTitle = "Something went wrong"
+                                        alertMessage = "Cannot complete the task right now."
+                                        return
+                                    }
+                                    tasks[indexOfTask] = taskToggleCompleteInstance
+                                }
+  
+                            }, label: {
+                                TaskView(task: TaskModel(name: task.name, priority: task.priority), priorityBar: task.priority, taskCompleted: task.isCompleted)
+                            })
+                        }.onDelete(perform: delete)
+                    }
+                }
+                .navigationTitle("Tasks")}
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showSheet = true
+                    }, label: {
+                        Image(systemName: "plus")
+                    })
+                }
+            }.sheet(isPresented: $showSheet, content: {
+                AddTaskSheetView(tasks: $tasks)
+            })
+        }
+    }
+    
+    private func delete(at offsets: IndexSet) {
+        tasks.remove(atOffsets: offsets)
+    }
+}
+
+#Preview {
+    HomeView()
+}

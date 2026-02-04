@@ -1,0 +1,80 @@
+//
+//  AddTaskView.swift
+//  ToDoList
+//
+//  Created by Nikhil Tyagi on 03/02/26.
+//
+
+import SwiftUI
+
+struct AddTaskSheetView: View {
+    @Binding var tasks: [TaskModel]
+    @State private var taskTitle = ""
+    @State private var selectedTaskPriority: TaskPriorityType = .low
+    @State private var showAlert: Bool = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack {
+            VStack {
+                VStack(alignment: .leading) {
+                    Text("Task Title")
+                    TextField("Enter Task", text: $taskTitle)
+                        .font(.system(size: 15))
+                        .textFieldStyle(.roundedBorder)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top)
+                
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Priority")
+                        Picker("Priority", selection: $selectedTaskPriority) {
+                            ForEach(TaskPriorityType.allCases) { taskPriority in
+                                Text(taskPriority.priority)
+                                    .tag(taskPriority)
+                            }
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top)
+                }
+            }.foregroundStyle(.black)
+                .padding(.top)
+            
+            Button(action: {
+                guard taskTitle.count >= 2 else {
+                    showAlert = true
+                    alertTitle = "Title too short"
+                    alertMessage = "Please input a larger title"
+                    return
+                }
+                let task = TaskModel(name: taskTitle, priority: selectedTaskPriority)
+                tasks.append(task)
+                dismiss()
+            }, label: {
+                Text("Add Task")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .background(.primaryLightGreen)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+            })
+            Spacer()
+        }
+        .alert(alertTitle, isPresented: $showAlert) {
+            Button(action: {}, label: {Text("OK")})
+        } message: {
+            Text(alertMessage)
+        }
+    }
+}
+
+#Preview {
+    AddTaskSheetView(tasks: .constant([]))
+}
