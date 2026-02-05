@@ -15,9 +15,28 @@ struct AddTaskSheetView: View {
     @State private var alertTitle = ""
     @State private var alertMessage = ""
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @Environment(\.verticalSizeClass) var verticalSizeClass
     
     var body: some View {
         VStack {
+            if horizontalSizeClass == .regular &&
+                verticalSizeClass == .compact ||
+                horizontalSizeClass == .compact &&
+                verticalSizeClass == .compact
+            {//To make "X" button appear on the top right corner to dismiss the add task view in landscpe mode, else it doesn't appear.
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        dismiss()
+                    }, label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.black)
+                    })
+                }.padding()
+            }
+            
             VStack {
                 VStack(alignment: .leading) {
                     Text("Task Title")
