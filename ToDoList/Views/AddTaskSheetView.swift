@@ -20,6 +20,11 @@ struct AddTaskSheetView: View {
     
     var body: some View {
         VStack {
+            if(UIDevice.isIpad) {
+                Spacer()  // If the UI deveice used is Ipad then move everything to the center. On Iphone it will be at the top.
+            }
+            
+            
             if horizontalSizeClass == .regular &&
                 verticalSizeClass == .compact ||
                 horizontalSizeClass == .compact &&
@@ -40,6 +45,15 @@ struct AddTaskSheetView: View {
             VStack {
                 VStack(alignment: .leading) {
                     Text("Task Title")
+                        .if(UIDevice.isIpad, transform: {
+                            view in
+                            view.font(.system(size: 20, weight: .semibold))
+                        })
+                        .if(UIDevice.isIphone, transform: {
+                            view in
+                            view.font(.system(size: 15, weight: .semibold))
+                        })
+                        
                     TextField("Enter Task", text: $taskTitle)
                         .font(.system(size: 15))
                         .textFieldStyle(.roundedBorder)
@@ -50,6 +64,15 @@ struct AddTaskSheetView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("Priority")
+                            .if(UIDevice.isIpad, transform: {
+                                view in
+                                view.font(.system(size: 20, weight: .semibold))
+                                
+                            })
+                            .if(UIDevice.isIphone, transform: {
+                                view in
+                                view.font(.system(size: 15, weight: .semibold))
+                            })
                         Picker("Priority", selection: $selectedTaskPriority) {
                             ForEach(TaskPriorityType.allCases) { taskPriority in
                                 Text(taskPriority.priority)
